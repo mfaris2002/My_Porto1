@@ -1,7 +1,7 @@
 'use client'
 import { motion } from 'framer-motion'
 import { FaInstagram, FaLinkedin, FaGithub } from 'react-icons/fa'
-
+// ini dev
 export default function Footer() {
   return (
     <motion.footer
