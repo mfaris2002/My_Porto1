@@ -1,0 +1,27 @@
+name: Deploy Portfolio
+
+on:
+  push:
+    branches:
+      - main  # Pastikan ini sesuai dengan nama branch utama Anda
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Executing remote ssh commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /var/www/my-portfolio # GANTI dengan path folder project di VPS Anda
+            git pull origin main
+            # Jika project Anda butuh build, tambahkan di sini, contoh:
+            # npm install
+            # npm run build
