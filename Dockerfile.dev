@@ -14,6 +14,8 @@ RUN pnpm run build
 # Stage 2: Runner
 FROM node:20-alpine3.19 AS release
 WORKDIR /app
+# Tambahkan baris ini di bawah 'WORKDIR /app' pada stage base/build
+ENV NODE_OPTIONS="--max-old-space-size=2048"
 RUN npm i -g pnpm
 
 # Salin hasil build yang diperlukan saja
@@ -23,5 +25,6 @@ COPY --from=base /app/.next ./.next/
 COPY --from=base /app/public ./public/
 
 EXPOSE 3000
+
 
 CMD ["pnpm", "dev"]
