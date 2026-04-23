@@ -20,7 +20,7 @@ jobs:
           key: ${{ secrets.SSH_KEY}}
           port: ${{ secrets.SSH_PORT}}
           script: |
-            cd /var/www/My_Porto1 # GANTI dengan path folder project di VPS Anda
+            cd /var/www/My_Porto1
             git pull origin main
             # Jika project Anda butuh build, tambahkan di sini, contoh:
             # npm install
