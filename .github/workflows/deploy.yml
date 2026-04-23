@@ -15,12 +15,12 @@ jobs:
       - name: Executing remote ssh commands
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
+          host: ${{ secrets.SSH_HOST}}
+          username: ${{ secrets.SSH_USERNAME}}
+          key: ${{ secrets.SSH_KEY}}
+          port: ${{ secrets.SSH_PORT}}
           script: |
-            cd /var/www/my-portfolio # GANTI dengan path folder project di VPS Anda
+            cd /var/www/My_Porto1 # GANTI dengan path folder project di VPS Anda
             git pull origin main
             # Jika project Anda butuh build, tambahkan di sini, contoh:
             # npm install
