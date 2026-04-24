@@ -1,29 +1,22 @@
-# Stage 1: Build
-FROM node:20-alpine AS base
-# Instal dependensi tambahan untuk Alpine
+# STAGE 1: Build di GitHub Actions
+FROM node:20-alpine AS builder
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 RUN npm i -g pnpm
 
-# --- KUNCI UTAMA: Izinkan Node pakai RAM/Swap sampai 2GB ---
-ENV NODE_OPTIONS="--max-old-space-size=2048"
-
 COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 RUN pnpm run build
 
-# Stage 2: Runner
-FROM node:20-alpine AS release
+# STAGE 2: Runner (Hanya ini yang dikirim ke VPS)
+FROM node:20-alpine AS runner
 WORKDIR /app
 
-# Salin file standalone (jauh lebih ringan)
-COPY --from=base /app/.next/standalone ./
-COPY --from=base /app/.next/static ./.next/static
-COPY --from=base /app/public ./public
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
 EXPOSE 3000
-
-# Jalankan menggunakan node langsung (lebih hemat RAM daripada pnpm start)
 CMD ["node", "server.js"]
