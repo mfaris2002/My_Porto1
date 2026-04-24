@@ -1,26 +1,39 @@
-# Stage 1: Build
+# Stage 1: Build (Dilakukan di GitHub Actions)
 FROM node:20-alpine AS builder
-RUN apk add --no-cache libc6-compat
+
+# Tambahkan build-base untuk compile library native seperti Sass atau Sharp
+RUN apk add --no-cache libc6-compat python3 make g++
+
 WORKDIR /app
 RUN npm i -g pnpm
 
-# Salin package.json dan coba salin lockfile jika ada
+# Set limit RAM Node.js agar proses build Next.js tidak pingsan
+ENV NODE_OPTIONS="--max-old-space-size=2048"
+
+# Salin file package & lockfile
 COPY package.json ./
 COPY pnpm-lock.yaml* ./ 
 
-# Hapus flag --frozen-lockfile agar tidak error jika lockfile tidak ada
+# Install dependencies (Tanpa frozen-lockfile agar fleksibel)
 RUN pnpm install
 
+# Salin seluruh source code & jalankan build
 COPY . .
 RUN pnpm run build
 
-# Stage 2: Runner
+# Stage 2: Runner (Ini yang dikirim ke VPS)
 FROM node:20-alpine AS runner
 WORKDIR /app
 
+# Atur environment produksi
+ENV NODE_ENV=production
+
+# Salin aset yang dibutuhkan dari builder
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
 EXPOSE 3000
+
+# Jalankan server Next.js (Standalone mode)
 CMD ["node", "server.js"]
