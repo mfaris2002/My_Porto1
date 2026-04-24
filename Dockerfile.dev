@@ -1,16 +1,20 @@
-# STAGE 1: Build di GitHub Actions
+# Stage 1: Build
 FROM node:20-alpine AS builder
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 RUN npm i -g pnpm
 
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --frozen-lockfile
+# Salin package.json dan coba salin lockfile jika ada
+COPY package.json ./
+COPY pnpm-lock.yaml* ./ 
+
+# Hapus flag --frozen-lockfile agar tidak error jika lockfile tidak ada
+RUN pnpm install
 
 COPY . .
 RUN pnpm run build
 
-# STAGE 2: Runner (Hanya ini yang dikirim ke VPS)
+# Stage 2: Runner
 FROM node:20-alpine AS runner
 WORKDIR /app
 
