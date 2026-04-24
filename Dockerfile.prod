@@ -18,17 +18,19 @@ RUN pnpm run build
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-ENV NODE_ENV=production
 
+ENV NODE_ENV=production
+# Matikan telemetry agar build lebih ringan
+ENV NEXT_TELEMETRY_DISABLED=1
 # Copy aset publik
 COPY --from=builder /app/public ./public
 
 # Copy hasil standalone
-COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/standalone ./    
 
 # Copy folder static ke dalam struktur yang benar agar CSS muncul
 RUN mkdir -p .next
 COPY --from=builder /app/.next/static ./.next/static
-
+COPY --from=builder /app/public ./public
 EXPOSE 3000
 CMD ["node", "server.js"]
