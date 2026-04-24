@@ -1,11 +1,14 @@
 const path = require('path')
 
-module.exports = {
-  output: 'standalone', // <--- TAMBAHKAN INI
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'standalone',
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
   },
   images: {
+    // Tambahkan ini jika VPS sering lag saat buka halaman yang banyak gambar
+    // unoptimized: true, 
     remotePatterns: [
       {
         protocol: 'https',
@@ -25,3 +28,5 @@ module.exports = {
     ],
   },
 }
+
+module.exports = nextConfig
