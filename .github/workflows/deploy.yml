@@ -6,7 +6,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  # Kita tulis manual saja dengan huruf kecil agar aman dan pasti berhasil
+  IMAGE_NAME: mfaris2002/my-porto1 
 
 jobs:
   build-and-push:
@@ -32,6 +33,7 @@ jobs:
           context: .
           file: ./Dockerfile.prod
           push: true
+          # Di sini kita panggil IMAGE_NAME yang sudah huruf kecil
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
   deploy:
@@ -46,16 +48,10 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            # Login ke GitHub Registry di VPS
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            
-            # Pindah ke folder project (untuk ambil docker-compose.yml saja)
             cd /var/www/my_porto1
             git pull origin main
-            
-            # Tarik image yang sudah jadi dari GitHub
+            # Pastikan docker-compose menggunakan nama image yang huruf kecil juga
             docker compose pull
             docker compose up -d
-            
-            # Bersihkan image lama yang tidak terpakai agar SSD VPS tidak penuh
             docker image prune -f
