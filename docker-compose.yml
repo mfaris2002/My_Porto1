@@ -1,8 +1,8 @@
 services:
   portfolio:
-    image: ghcr.io/mfaris2002/my_porto1:latest # Sesuaikan username/repo
+    image: ghcr.io/mfaris2002/my-porto1:latest
     container_name: my-portfolio
+    # BAGIAN INI WAJIB ADA:
     ports:
       - "3000:3000"
     restart: always
-    # Kita tidak pakai 'build:' lagi di sini supaya VPS tidak kerja berat
